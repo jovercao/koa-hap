@@ -225,18 +225,18 @@ module.exports = function(apiPath, { basePath, extension, delayLoad }) {
     loadHandlers();
   }
 
+
+  console.log(handlers);
+  console.log(cache);
+
   const urlPathReg = new RegExp(`^${rootPath}/.*`);
   urlPathReg.compile(urlPathReg);
 
   const middleware = async function(ctx, next) {
     const { path, body, method } = ctx.request;
-    console.log(path);
     if (!urlPathReg.test(path)) {
       return await next();
     }
-
-    console.log(handlers);
-    console.log(cache);
 
     const handler = getHandler(path);
     if (!handler) {
@@ -273,11 +273,14 @@ module.exports = function(apiPath, { basePath, extension, delayLoad }) {
       // throw new Error('koa-api need to use ctx.request.body e.g. `koa-body` - http://github.com/dlau/koa-body.');
     }
 
+
     // 调用程序
     try {
-      ctx.body = {
-        data: await handler(body, ctx),
+      let data = await handler(body, ctx);
+      const ret = {
+        data
       };
+      ctx.status = 200;
     } catch (err) {
       const ret = {
         success: false,
@@ -289,7 +292,11 @@ module.exports = function(apiPath, { basePath, extension, delayLoad }) {
           ret.errData = err.data;
         }
       }
+      ctx.body = ret;
     }
+
+    console.log(ctx.response);
+
   };
 
   middleware.handlers = handlers;

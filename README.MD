@@ -1,9 +1,7 @@
-# koa-api
+# koa-hap
 
-## koa-api介绍
-
-## 关于koa-hap
-koa-api是基于[`hap协议`](#hap协议)的实现，以文件目录及文件名为目录的约定默认url映射，提供一套koa的中间件，仅支持koa2。
+## koa-hap介绍
+koa-hap是基于[`HAP协议`](#HAP协议)的实现，以文件目录及文件名为目录的约定默认url映射，提供一套koa的中间件，***需要注意的是，koa-hap仅支持koa2***。
 
 > 注意，--不支持koa 1.0--
 
@@ -29,33 +27,8 @@ const app = new Koa()
 app.use(koaHap('apis', {
   basePath: '/api', // http url path, default is '/api'
   extension: '*.js|*.es6', // string或者RegExp类型
+  layoutLoad: false, //是否开启延迟加载，不建议开启
 }))
-
-app.listen(3000)
-// ...
-
-```
-
-#### 配合koa-router使用
-
-```js
-// koa app.js
-
-import Koa from 'koa'
-import Router from 'koa-router'
-import koaHap from 'koa-hap'
-
-const app = new Koa()
-
-const router = new Router()
-
-//使用中间件
-router.perfix('/api').use(koaHap('apis', {
-  basePath: 'test', // api根url被转为: /api/test
-  extension: '*.js|*.es6', // string或者RegExp类型
-}))
-
-app.use(router)
 
 app.listen(3000)
 // ...
@@ -71,8 +44,7 @@ koa-hap只包含一个入口函数 `function koaHap(apiPath, options)`
 apiPath|string|api程序文件路径
 options|object|配置选项
 
-返回
-[koa - middleware](https://www.npmjs.com/package/koa#middleware) 函数，该函数有一个`handlers`, 该属性存放apiPath映射后的对象，其结构如下：
+返回一个[koa - middleware](https://www.npmjs.com/package/koa#middleware) 函数，该函数有一个`handlers`, 该属性存放apiPath映射后的对象，其结构如下：
 
 ```js
 {
@@ -95,9 +67,12 @@ basePath|string|"/api"|http服务中绑定到的url，可以指定到"/"，这�
 extension|string/RegExp|"*.js"|字符串格式:"*.js&#124;*.es6"，如果apiPath下有发现不符合hap协议的程序文件，中间件将报错处理。***注意：如果您使用了ES6，除非您配置了babel，否则并不会自动转码，将会抛出异常***
 delayLoad|boolean|false|延迟加载，如果配置了该项，服务将动态查找对应的程序文件执行。这样可以提高服务启动速度。***需要注意的是这样并不安全，你还需要严密监测apiPath下的文件变化，并且不会返回映射结构，--除非特殊要求，否则不建议开启此项--***
 
-### apiPath映射约定
+### URL映射约定
 
-例如下目录结构
+koa-hap,会将apiPath中的文件，映射到url中，
+
+**例如：**
+`apiPath`参数指定的目录结构
 
 ```fs
 /api
@@ -146,8 +121,7 @@ api
   ...
 ```
 
-
-## hap协议
+## HAP协议
 
 - 以http的POST方式为提交数据
 - 以json为数据传输格式
@@ -201,8 +175,8 @@ Content-Type: application/json;charset=UTF-8
 ...
 ------------------body---------------------------
 {
-  username: "admin",
-  password: "123"
+  "username": "admin",
+  "password": "123"
 }
 ```
 
