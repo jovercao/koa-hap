@@ -1,0 +1,30 @@
+{
+  "name": "koa-hap",
+  "version": "1.0.0",
+  "description": "koa-hap 是一套轻量级的http运程调用协议，接口统一使用post调用，body为json数据，url为调用位置。",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jovercao/koa-hap.git"
+  },
+  "keywords": [
+    "koa",
+    "http",
+    "middleware",
+    "api",
+    "rpc",
+    "hap"
+  ],
+  "author": "jover",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jovercao/koa-api/issues"
+  },
+  "homepage": "https://github.com/jovercao/koa-hap#readme",
+  "dependencies": {
+    "co-body": "^5.1.1"
+  }
+}
