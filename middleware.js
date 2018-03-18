@@ -48,7 +48,7 @@ function getExtReg(extension) {
   return reg.compile(reg);
 }
 
-module.exports = function(apiPath, { basePath, extension, delayLoad }) {
+module.exports = function(apiPath, { basePath, extension, delayLoad } = { basePath: '/api', extension: '.js', delayLoad: false }) {
   const rootPath = basePath.startsWith('/') ? basePath : '/' + basePath;
   const handlers = { __path: rootPath };
   const cache = {};
@@ -112,13 +112,17 @@ module.exports = function(apiPath, { basePath, extension, delayLoad }) {
       // 优先处理文件
       for (const file of files) {
         const fullPath = path.join(curPath, file);
+
         // 如何保证文件在文件夹前面？
-        if (isFile(fullPath) && extReg.test(file)) {
+        if (isFile(fullPath)) {
+          if (!extReg.test(file)) {
+            continue;
+          }
           // 去除扩展名
           const nodeName = path.basename(file).replace(extReg, '$1');
           if (!pathNodeReg.test(nodeName)) {
             throw new Error(
-              `目录名或者文件名${fullPath}, ${nodeName}不符合hap协议规定！`
+              `文件名${fullPath}, ${nodeName}不符合hap协议规定！`
             );
           }
           if (curNode[nodeName]) {
@@ -151,6 +155,11 @@ module.exports = function(apiPath, { basePath, extension, delayLoad }) {
         const fullPath = path.join(curPath, dirname);
 
         if (isDir(fullPath)) {
+          if (!pathNodeReg.test(nodeName)) {
+            throw new Error(
+              `目录名${fullPath}, ${nodeName}不符合hap协议规定！`
+            );
+          }
           const nodeName = path.basename(dirname);
           if (!curPath[nodeName]) {
             curNode[nodeName] = {
@@ -289,7 +298,7 @@ module.exports = function(apiPath, { basePath, extension, delayLoad }) {
 
       if (process.env.NODE_ENV === 'developement') {
         if (err.data) {
-          ret.errData = err.data;
+          ret.errData = err.stack;
         }
       }
       ctx.body = ret;
