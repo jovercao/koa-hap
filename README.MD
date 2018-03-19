@@ -123,7 +123,7 @@ api
 
 ## HAP协议
 
-- 以http的POST方式为提交数据
+- 以http的POST方式为提交数据,数据以content提交
 - 以json为数据传输格式
 - 以url为调用位置描述
 - url节(即两个`/`之间)只允许标识符,验证规则：`/^([a-zA-Z]+[0-9]*)+$/`，多级使用/划分。
@@ -134,17 +134,17 @@ api
   - /api#auth#login 此url非法.
 - hap不规定除以上规定以外的项，即header，cookie,均由用户自行决定。
 
-**request**
+**request content**
 
-```json
+```js
 {
-  "arg1": ...,
-  "arg2": ...
+  "arg1": "这是参数1",
+  "arg2": { "这是参数2" }
 }
 ```
 
-**response**
-```json
+**response content**
+```js
 {
   //表示此次是否调用成功，如果不成功，则却要
   "success": false,
@@ -152,10 +152,11 @@ api
   "errMsg": "发生了错误",
   // 错误数据，错误信息类型为任意类型，可以在此项存放错误信息，不用时可以省略
   "errData": {
-    "code": "01"
+    "code": "01",
+    "stack": "....."
   },
   // 接口返回值，如果没有返回值或者发生了错误，可以省略此项
-  "data": null
+  "data": undefined
 }
 ```
 

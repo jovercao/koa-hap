@@ -153,14 +153,13 @@ module.exports = function(apiPath, { basePath, extension, delayLoad } = { basePa
       // 再处理文件夹，以免路径成为对象导致无法调用
       for (const dirname of dirs) {
         const fullPath = path.join(curPath, dirname);
-
+        const nodeName = path.basename(dirname);
         if (isDir(fullPath)) {
           if (!pathNodeReg.test(nodeName)) {
             throw new Error(
               `目录名${fullPath}, ${nodeName}不符合hap协议规定！`
             );
           }
-          const nodeName = path.basename(dirname);
           if (!curPath[nodeName]) {
             curNode[nodeName] = {
               __file: fullPath,
@@ -234,9 +233,10 @@ module.exports = function(apiPath, { basePath, extension, delayLoad } = { basePa
     loadHandlers();
   }
 
-
-  console.log(handlers);
-  console.log(cache);
+  console.log('loaded handlers tree:');
+  console.dir(handlers);
+  console.log('loaded url mappings:')
+  console.dir(cache);
 
   const urlPathReg = new RegExp(`^${rootPath}/.*`);
   urlPathReg.compile(urlPathReg);
@@ -286,7 +286,7 @@ module.exports = function(apiPath, { basePath, extension, delayLoad } = { basePa
     // 调用程序
     try {
       let data = await handler(body, ctx);
-      const ret = {
+      ctx.body = {
         data
       };
       ctx.status = 200;
@@ -303,9 +303,6 @@ module.exports = function(apiPath, { basePath, extension, delayLoad } = { basePa
       }
       ctx.body = ret;
     }
-
-    console.log(ctx.response);
-
   };
 
   middleware.handlers = handlers;
