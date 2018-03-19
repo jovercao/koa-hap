@@ -1,6 +1,6 @@
 {
   "name": "koa-hap",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "koa-hap 是一套轻量级的http运程调用协议，接口统一使用post调用，body为json数据，url为调用位置。",
   "main": "index.js",
   "scripts": {

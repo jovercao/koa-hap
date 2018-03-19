@@ -285,7 +285,7 @@ module.exports = function(apiPath, { basePath, extension, delayLoad } = { basePa
 
     // 调用程序
     try {
-      let data = await handler(body, ctx);
+      let data = await handler(arg, ctx);
       ctx.body = {
         data
       };
